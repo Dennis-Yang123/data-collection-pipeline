@@ -1,2 +1,2 @@
 # Data Collection Pipeline
-## Mielstone 3
+## Milestone 3
