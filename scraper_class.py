@@ -38,8 +38,6 @@ class ScraperClass:
         for index in links[29:79]:
             links = index.get_attribute("href")
             print(links)
-            # scraper_links = links[30:79]
-        # print(scraper_links)
         
         return(links)
 
