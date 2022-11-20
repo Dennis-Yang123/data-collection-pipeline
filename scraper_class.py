@@ -32,16 +32,51 @@ class ScraperClass:
 
 
     def url_link_scraper(self):
-        links = []
-        links = links + driver.find_elements(by=By.TAG_NAME, value="a")
+        links= driver.find_elements(by=By.TAG_NAME, value="a")
         
         for index in links[29:79]:
-            links = index.get_attribute("href")
-            print(links)
+            links = links + [index.get_attribute("href")]
+        links = links[105:] 
+        # print(links)
         
-        return(links)
+        time.sleep(2)
+        self.text_scraper(links)
+        self.img_scraper(links)
+
+
+    def text_scraper(self, links):
+
+        # for x in links:
+        data_url = links[0]
+        site = driver.get(data_url)
+        time.sleep(2)
+        driver.execute_script("window.scrollTo(0, 1350)")
+        time.sleep(2)
+
+        site_text = driver.find_elements(by=By.TAG_NAME, value="p")
+        # print(site_text)
+        for text_index in site_text:
+            site_text = site_text + [text_index.text]
+        site_text = site_text[332]
+        print(site_text) # Prints crypto price summaries
+        
+
+    def img_scraper(self, links):
+        data_url = links[0]
+        site = driver.get(data_url)
+        time.sleep(2)
+        img_link = driver.find_elements(by=By.TAG_NAME, value="img")
+        for img_index in img_link:
+            img_link = img_link + [img_index.get_attribute("src")]
+        
+        img_link = img_link[158]
+        print(img_link)
+
+
+
 
 if __name__ == '__main__':
     run = ScraperClass(website)
     run.cookie_ad_clicker()
+    
 # %%
