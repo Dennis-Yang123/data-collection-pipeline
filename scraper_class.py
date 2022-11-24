@@ -51,7 +51,6 @@ class ScraperClass:
 
 
     def img_scraper(self, links):
-            k = 1
             time.sleep(1)
             data_url = links[0]
             site = driver.get(data_url)
@@ -66,24 +65,12 @@ class ScraperClass:
             self.dictionary["ID"].append(id)
             t = time.localtime()
             current_time = time.strftime("%H:%M:%S", t)
-            date_time_now = datetime.now()
-            dt_string = date_time_now.strftime("%d%m%Y%H%M%S") + str(k)
-            print(dt_string)
-            k += 1
             self.dictionary["Timestamp"].append(current_time)
-
-            try:
-                img_data = requests.get(img_link).content
-                with open("test_image.png", "wb") as handler:
-                    handler.write(img_data)
-            except:
-                print("Image file already exists")
             
-            try:
-                Path(r"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\test_image.png").rename(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\\images\{dt_string}.png")
-            except:
-                print("Image file already exists")
-
+            self.img_downloader(img_link)
+            
+            
+            
 
     def text_scraper(self, links):
 
@@ -104,30 +91,53 @@ class ScraperClass:
         
         print(self.dictionary)
 
-directory = "raw_data"
-parent_directory = "c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline"
-path = os.path.join(parent_directory, directory) 
+    def dict_saver(self):
+        directory = "raw_data"
+        parent_directory = "c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline"
+        path = os.path.join(parent_directory, directory) 
 
-try:
-    os.mkdir(path)
-except OSError as error:
-    print("Folder already exists")
+        try:
+            os.mkdir(path)
+        except OSError as error:
+            print("Folder already exists")
 
+        try:    
+            open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
+        except:
+            print("Dictionary file already exists")
 
+        file1 = open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "w")
+        str1 = repr(self.dictionary)
+        file1.write("Dictionary = " + str1 + "\n")
+        file1.close()
 
-try:    
-    open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
-except:
-    print("Dictionary file already exists")
-
+        f = open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "r")
+        if f.mode == "r":
+            contents = f.read()
+    
+    def img_downloader(self, img_link):
+        k = 1
+        date_time_now = datetime.now()
+        dt_string = date_time_now.strftime("%d%m%Y%H%M%S") + str(k)
+        # print(dt_string)
+        k += 1
+        try:
+            img_data = requests.get(img_link).content
+            with open("test_image.png", "wb") as handler:
+                handler.write(img_data)
+        except:
+            print("Image file already exists")
+            
+        try:
+            Path(r"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\test_image.png").rename(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\\images\{dt_string}.png")
+        except:
+            print("Image file already exists")       
 
 if __name__ == '__main__':
     run = ScraperClass(website)
     run.cookie_ad_clicker()
+    run.dict_saver()
+    
 
-try:    
-    open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
-except:
-    print("Dictionary file already exists")
 
 # %%
