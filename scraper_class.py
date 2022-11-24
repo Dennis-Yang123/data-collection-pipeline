@@ -39,8 +39,8 @@ class ScraperClass:
     def url_link_scraper(self):
         links= driver.find_elements(by=By.TAG_NAME, value="a")
         
-        for index in links[29:79]:
-            links = links + [index.get_attribute("href")]
+        for link_index in links[29:79]:
+            links = links + [link_index.get_attribute("href")]
         links = links[105:] 
         # print(links)
         
@@ -51,45 +51,46 @@ class ScraperClass:
 
 
     def img_scraper(self, links):
-            time.sleep(1)
-            data_url = links[0]
-            site = driver.get(data_url)
-            id = str(uuid4())
-            time.sleep(2)
-            img_link = driver.find_elements(by=By.XPATH, value='//*[@id="__next"]/div[3]/div/div[2]/div[2]/div[1]/div[1]/div/span/img')
-            for img_index in img_link:
-                img_link = img_link + [img_index.get_attribute("src")]
-            img_link = img_link[1]
-            # print(img_link)
-            self.dictionary["Img Link"].append(img_link)
-            self.dictionary["ID"].append(id)
-            t = time.localtime()
-            current_time = time.strftime("%H:%M:%S", t)
-            self.dictionary["Timestamp"].append(current_time)
-            
-            self.img_downloader(img_link)
+            for link_count in links[:2]:
+                time.sleep(1)
+                # data_url = links[link_count]
+                site = driver.get(link_count)
+                id = str(uuid4())
+                time.sleep(2)
+                img_link = driver.find_elements(by=By.XPATH, value='//*[@id="__next"]/div[3]/div/div[2]/div[2]/div[1]/div[1]/div/span/img')
+                for img_index in img_link:
+                    img_link = img_link + [img_index.get_attribute("src")]
+                img_link = img_link[1]
+                # print(img_link)
+                self.dictionary["Img Link"].append(img_link)
+                self.dictionary["ID"].append(id)
+                t = time.localtime()
+                current_time = time.strftime("%H:%M:%S", t)
+                self.dictionary["Timestamp"].append(current_time)
+                
+                self.img_downloader(img_link)
             
             
             
 
     def text_scraper(self, links):
 
-        # for x in links:
-        data_url = links[0]
-        site = driver.get(data_url)
-        time.sleep(2)
-        driver.execute_script("window.scrollTo(0, 1350)")
-        time.sleep(2)
+        for link_count in links[:2]:
+            # data_url = links[link_count]
+            site = driver.get(link_count)
+            time.sleep(2)
+            driver.execute_script("window.scrollTo(0, 1350)")
+            time.sleep(2)
 
-        site_text = driver.find_elements(by=By.CLASS_NAME, value="css-srvu6d")
-        # print(site_text)
-        for text_index in site_text:
-            site_text = site_text + [text_index.text]
-        site_text = site_text[1]
-        # print(site_text) # Prints crypto price summaries
-        self.dictionary["Price Summary"].append(site_text)
-        
-        print(self.dictionary)
+            site_text = driver.find_elements(by=By.CLASS_NAME, value="css-srvu6d")
+            # print(site_text)
+            for text_index in site_text:
+                site_text = site_text + [text_index.text]
+            site_text = site_text[1]
+            # print(site_text) # Prints crypto price summaries
+            self.dictionary["Price Summary"].append(site_text)
+            
+            print(self.dictionary)
 
     def dict_saver(self):
         directory = "raw_data"
