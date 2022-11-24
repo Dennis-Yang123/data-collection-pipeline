@@ -23,6 +23,13 @@ class ScraperClass:
         self.dictionary = {"Price Summary": [], "Img Link": [], "Timestamp": [], "ID": []}
     
     def cookie_ad_clicker(self):
+        """Clicks decline cookie button on webpage
+
+        Uses a delay to allow the cookies option to appear. Then 
+        clicks the decline button with the elements XPATH when it 
+        appears. It will also run the url_link_scraper method after.
+        """
+
         delay = 10
         try:    
             time.sleep(4)
@@ -35,8 +42,15 @@ class ScraperClass:
         except TimeoutException:
             print("Loading took too much time.")
 
-
     def url_link_scraper(self):
+        """Scrapes the links to top 50 current crypto coins
+
+        Finds the links by searching for all a tags in the page.
+        Uses a for loop and list slicing to iterate through all
+        the relevant elements. Then retrieve all the chosen elements
+        and their href attribute. Using list slicing again we can
+        get all the links to the top 50 crypto coints.
+        """
         links= driver.find_elements(by=By.TAG_NAME, value="a")
         
         for link_index in links[29:79]:
@@ -48,35 +62,44 @@ class ScraperClass:
         self.img_scraper(links)
         self.text_scraper(links)
         
-
-
     def img_scraper(self, links):
-            for link_count in links[:2]:
-                time.sleep(1)
-                # data_url = links[link_count]
-                site = driver.get(link_count)
-                id = str(uuid4())
-                time.sleep(2)
-                img_link = driver.find_elements(by=By.XPATH, value='//*[@id="__next"]/div[3]/div/div[2]/div[2]/div[1]/div[1]/div/span/img')
-                for img_index in img_link:
-                    img_link = img_link + [img_index.get_attribute("src")]
-                img_link = img_link[1]
-                # print(img_link)
-                self.dictionary["Img Link"].append(img_link)
-                self.dictionary["ID"].append(id)
-                t = time.localtime()
-                current_time = time.strftime("%H:%M:%S", t)
-                self.dictionary["Timestamp"].append(current_time)
-                
-                self.img_downloader(img_link)
-            
-            
-            
+        """Scrapes image from the webpage
 
-    def text_scraper(self, links):
-
+        Uses a for loop to go through each wep page in the links 
+        list. From the web page we can find the URL for the image
+        by using the specific XPATH then using a for loop we can 
+        get the src attribute to get the image URL. Then we add to 
+        our dictionary by appending the different keys.
+        """
         for link_count in links[:2]:
-            # data_url = links[link_count]
+            time.sleep(1)
+            site = driver.get(link_count)
+            id = str(uuid4())
+            time.sleep(2)
+            img_link = driver.find_elements(by=By.XPATH, value='//*[@id="__next"]/div[3]/div/div[2]/div[2]/div[1]/div[1]/div/span/img')
+            for img_index in img_link:
+                img_link = img_link + [img_index.get_attribute("src")]
+            img_link = img_link[1]
+            # print(img_link)
+            self.dictionary["Img Link"].append(img_link)
+            self.dictionary["ID"].append(id)
+            t = time.localtime()
+            current_time = time.strftime("%H:%M:%S", t)
+            self.dictionary["Timestamp"].append(current_time)
+                
+            self.img_downloader(img_link)
+            
+    def text_scraper(self, links):
+        """Scrapes text from web page
+
+        Uses a similar for loop to go through the list of links.
+        Scrolls down the page to where the text to be scraped is
+        located. Then finds the text by searching with the class
+        name. Uses a for loop and the .text function to retrieve 
+        the text from the page. Updates the dictionary by appending
+        the text.
+        """
+        for link_count in links[:2]:
             site = driver.get(link_count)
             time.sleep(2)
             driver.execute_script("window.scrollTo(0, 1350)")
@@ -93,6 +116,13 @@ class ScraperClass:
             print(self.dictionary)
 
     def dict_saver(self):
+        """Creates folder for dictionary then saves dictionary locally
+
+        Using the os module we create a path and directory for the
+        raw_data folder. We use a try statement to create the folder
+        if it already doesn't exist. Then we check if the dictionary 
+        file exists and then create it if it does not.
+        """
         directory = "raw_data"
         parent_directory = "c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline"
         path = os.path.join(parent_directory, directory) 
@@ -117,6 +147,12 @@ class ScraperClass:
             contents = f.read()
     
     def img_downloader(self, img_link):
+        """Downloads the image and saves it locally
+
+        First downloads the image to the incorrect folder then
+        moves the file and renames it to the dt_string variable
+        to the correct folder
+        """
         k = 1
         date_time_now = datetime.now()
         dt_string = date_time_now.strftime("%d%m%Y%H%M%S") + str(k)
