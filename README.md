@@ -23,3 +23,71 @@ def url_link_scraper(self):
         return(links)
 ```
 From the code above you can see that I create a `links` variable which is initially an empty list and then we add to the empty list using the `driver.find_elements()` function to identify all the `a` tags in the webpage. Using a `for` loop and list indexing we can select all the relevant `a` tags relating to the top 50 crypto coins. Looking inside the `for` loop we overwrite the links variable by iterating through the previous `links` variable and printing the `href` attribute which would have the links to all the top 50 crypto coins.
+
+## Milestone 4
+For this milestone I was asked to get data from each corresponding page.
+
+The first task was to create a function to retrieve text and image data from a single details page. I've done this by creating two different methods for extracting text and images. For the image method I done this with the following code below:
+```
+img_link = driver.find_elements(by=By.XPATH, value='//*[@id="__next"]/div[3]/div/div[2]/div[2]/div[1]/div[1]/div/span/img')
+            for img_index in img_link:
+                img_link = img_link + [img_index.get_attribute("src")]
+            img_link = img_link[1]
+```
+From the code above you can see that I searched for the specific XPATH element for the image and then pulled the `src` attribute in the `for` loop to get the image url.
+
+For the text method I employed a similar method as shown above:
+```
+site_text = driver.find_elements(by=By.CLASS_NAME, value="css-srvu6d")
+        # print(site_text)
+        for text_index in site_text:
+            site_text = site_text + [text_index.text]
+        site_text = site_text[1]
+```
+From the code above you can see that I searched for the specific class name instead of the XPATH and used the `.text` function to get the text from the class in the `for` loop.
+
+The next task was to create a dictionary to store all relevant information about the text and image data and to save it locally in a specific folder and name. I created the dictionary by setting it up as a parameter in my class: `        self.dictionary = {"Price Summary": [], "Img Link": [], "Timestamp": [], "ID": []}`. From then it was just a matter of appending the different keys in the dictionary. I saved the dictionary into a specific path and name with the following code below:
+
+```
+directory = "raw_data"
+parent_directory = "c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline"
+path = os.path.join(parent_directory, directory) 
+
+try:
+    os.mkdir(path)
+except OSError as error:
+    print("Folder already exists")
+
+try:    
+    open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
+except:
+    print("Dictionary file already exists")
+
+try:    
+    open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
+except:
+    print("Dictionary file already exists")
+
+```
+For the final task i was asked to create a method to use the image links and download the images. I did this using the following code below:
+```
+  t = time.localtime()
+            current_time = time.strftime("%H:%M:%S", t)
+            date_time_now = datetime.now()
+            dt_string = date_time_now.strftime("%d%m%Y%H%M%S") + str(k)
+            print(dt_string)
+            k += 1
+            self.dictionary["Timestamp"].append(current_time)
+
+            try:
+                img_data = requests.get(img_link).content
+                with open("test_image.png", "wb") as handler:
+                    handler.write(img_data)
+            except:
+                print("Image file already exists")
+            
+            try:
+                Path(r"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\test_image.png").rename(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\\images\{dt_string}.png")
+            except:
+                print("Image file already exists")
+```
