@@ -125,12 +125,9 @@ if __name__ == '__main__':
     run = ScraperClass(website)
     run.cookie_ad_clicker()
 
-dict_file = open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "w")
-str_dict = repr(run.dictionary)
-dict_file.write("Dictionary = " + str_dict + "\n")
-
-f = open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "r")
-if f.mode == "r":
-    contents = f.read()
+try:    
+    open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "x")
+except:
+    print("Dictionary file already exists")
 
 # %%
