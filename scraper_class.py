@@ -12,15 +12,17 @@ from uuid import uuid4
 from pathlib import Path
 from datetime import datetime
 
+
 driver = webdriver.Chrome()
 URL = "https://crypto.com/price"
 website = driver.get(URL)
 
-
 class ScraperClass:
+
     def __init__(self, website):
         self.website = website
         self.dictionary = {"Price Summary": [], "Img Link": [], "Timestamp": [], "ID": []}
+        self.links = []
     
     def cookie_ad_clicker(self):
         """Clicks decline cookie button on webpage
@@ -37,11 +39,12 @@ class ScraperClass:
             time.sleep(2)
             decline_cookies_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="onetrust-reject-all-handler"]')))
             decline_cookies_button.click()
-            self.url_link_scraper()
+            cookie = 1
 
         except TimeoutException:
             print("Loading took too much time.")
 
+        return cookie
     def url_link_scraper(self):
         """Scrapes the links to top 50 current crypto coins
 
@@ -51,18 +54,21 @@ class ScraperClass:
         and their href attribute. Using list slicing again we can
         get all the links to the top 50 crypto coints.
         """
-        links= driver.find_elements(by=By.TAG_NAME, value="a")
+        driver.execute_script("window.scrollTo(0, 500)")
+        self.links= driver.find_elements(by=By.TAG_NAME, value="a")
         
-        for link_index in links[29:79]:
-            links = links + [link_index.get_attribute("href")]
-        links = links[105:] 
-        # print(links)
+        for link_index in self.links[29:79]:
+            self.links = self.links + [link_index.get_attribute("href")]
+        self.links = self.links[105:] 
+        # print(self.links[0])
         
         time.sleep(2)
-        self.img_scraper(links)
-        self.text_scraper(links)
+        self.__img_scraper()
+        self.__text_scraper()
         
-    def img_scraper(self, links):
+        return str(self.links[0])
+    
+    def __img_scraper(self):
         """Scrapes image from the webpage
 
         Uses a for loop to go through each wep page in the links 
@@ -71,7 +77,7 @@ class ScraperClass:
         get the src attribute to get the image URL. Then we add to 
         our dictionary by appending the different keys.
         """
-        for link_count in links[:2]:
+        for link_count in self.links[:2]:
             time.sleep(1)
             site = driver.get(link_count)
             id = str(uuid4())
@@ -87,9 +93,10 @@ class ScraperClass:
             current_time = time.strftime("%H:%M:%S", t)
             self.dictionary["Timestamp"].append(current_time)
                 
-            self.img_downloader(img_link)
+            self.__img_downloader(img_link)
+
             
-    def text_scraper(self, links):
+    def __text_scraper(self):
         """Scrapes text from web page
 
         Uses a similar for loop to go through the list of links.
@@ -99,7 +106,7 @@ class ScraperClass:
         the text from the page. Updates the dictionary by appending
         the text.
         """
-        for link_count in links[:2]:
+        for link_count in self.links[:2]:
             site = driver.get(link_count)
             time.sleep(2)
             driver.execute_script("window.scrollTo(0, 1350)")
@@ -112,10 +119,12 @@ class ScraperClass:
             site_text = site_text[1]
             # print(site_text) # Prints crypto price summaries
             self.dictionary["Price Summary"].append(site_text)
-            
-            print(self.dictionary)
+        
+        
+        print(self.dictionary)
+        self.__dict_saver()
 
-    def dict_saver(self):
+    def __dict_saver(self):
         """Creates folder for dictionary then saves dictionary locally
 
         Using the os module we create a path and directory for the
@@ -145,8 +154,9 @@ class ScraperClass:
         f = open("c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\data.json", "r")
         if f.mode == "r":
             contents = f.read()
-    
-    def img_downloader(self, img_link):
+        
+        
+    def __img_downloader(self, img_link):
         """Downloads the image and saves it locally
 
         First downloads the image to the incorrect folder then
@@ -167,14 +177,16 @@ class ScraperClass:
             
         try:
             Path(r"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\test_image.png").rename(f"c:\\Users\\denni\\Desktop\\AiCore\\Projects\\data-collection-pipeline\\raw_data\\images\{dt_string}.png")
+            
         except:
-            print("Image file already exists")       
+            print("Image file already exists") 
 
+  
 if __name__ == '__main__':
     run = ScraperClass(website)
     run.cookie_ad_clicker()
-    run.dict_saver()
-    
+    run.url_link_scraper()
 
+    
 
 # %%
