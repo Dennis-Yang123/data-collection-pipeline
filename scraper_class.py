@@ -12,8 +12,14 @@ from uuid import uuid4
 from pathlib import Path
 from datetime import datetime
 
+# full_screen = webdriver.ChromeOptions()
+# full_screen.add_argument("--start-maximized")
+headless = webdriver.FirefoxOptions()
+headless.add_argument("--headless")
+# options.add_argument("--headless")
+driver = webdriver.Firefox(options=headless)
 
-driver = webdriver.Chrome()
+
 URL = "https://crypto.com/price"
 website = driver.get(URL)
 
