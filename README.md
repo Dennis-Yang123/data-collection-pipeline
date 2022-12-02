@@ -91,3 +91,22 @@ For the final task i was asked to create a method to use the image links and dow
             except:
                 print("Image file already exists")
 ```
+## Milestone 5
+For the first task I was asked to refactor and optimise my current code. I have done this by splitting up some of my methods and creating additional methods such as for downloading the image and saving the dictionary locally. The next task was to add docstrings to all of my functions.
+
+The final tasks were to create unit test to test all my public methods in my scraper. I created a separate file to test my methods. I have written my unit tests below:
+
+```
+class TestScraperClass(unittest.TestCase):
+    def setUp(self):
+        self.scraper = scraper_class.ScraperClass
+
+    def test_cookie_ad_clicker(self):
+        self.assertEqual(self.scraper.cookie_ad_clicker(self), 1)
+
+    def test_url_link_scraper(self):
+        self.assertEqual(self.scraper.url_link_scraper(self), "https://crypto.com/price/bitcoin")
+```
+From the code above you can see that for my first public method `cookie_ad_clicker()` I am using the `assertEqual` function to check if the method has clicked the reject cookies button by returning the `cookie = 1` variable that is in the `try` statement which would verify that it has clicked the reject cookies button.
+
+For my other public method you can see in `scraper_class.py` under the `url_link_scraper` method that I return the first element of the `links` list. From the code above you can see that I am using the `assertEqual` function again to check that the first element of the list is the link to the bitcoin page. Since the list of the top 50 crypo coins is subject to change I've decided to only check the top coin (Bitcoin) since it is unlikely for it to be removed from the top.
