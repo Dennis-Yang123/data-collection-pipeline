@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 import time
 import os
@@ -12,11 +11,8 @@ from uuid import uuid4
 from pathlib import Path
 from datetime import datetime
 
-# full_screen = webdriver.ChromeOptions()
-# full_screen.add_argument("--start-maximized")
 headless = webdriver.FirefoxOptions()
 headless.add_argument("--headless")
-# options.add_argument("--headless")
 driver = webdriver.Firefox(options=headless)
 
 
