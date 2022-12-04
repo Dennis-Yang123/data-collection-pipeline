@@ -79,7 +79,7 @@ class ScraperClass:
         get the src attribute to get the image URL. Then we add to 
         our dictionary by appending the different keys.
         """
-        for link_count in self.links[:2]:
+        for link_count in self.links:
             time.sleep(1)
             site = driver.get(link_count)
             id = str(uuid4())
@@ -108,7 +108,7 @@ class ScraperClass:
         the text from the page. Updates the dictionary by appending
         the text.
         """
-        for link_count in self.links[:2]:
+        for link_count in self.links:
             site = driver.get(link_count)
             time.sleep(2)
             driver.execute_script("window.scrollTo(0, 1350)")
