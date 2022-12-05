@@ -24,3 +24,5 @@ console.warn: SearchSettings: "get: No settings file exists, new profile?" (new 
 console.error: Region.jsm: "Error fetching region" (new AbortError("The operation was aborted. ", (void 0), 761))
 console.error: Region.jsm: "Failed to fetch region" (new Error("NO_RESULT", "resource://gre/modules/Region.sys.mjs", 415))
 DevTools listening on ws://127.0.0.1:54352/devtools/browser/3b91bc98-e974-4463-8de1-7a44497f2520
+JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE
+JavaScript error: , line 0: NS_ERROR_NOT_AVAILABLE
