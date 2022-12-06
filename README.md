@@ -110,3 +110,87 @@ class TestScraperClass(unittest.TestCase):
 From the code above you can see that for my first public method `cookie_ad_clicker()` I am using the `assertEqual` function to check if the method has clicked the reject cookies button by returning the `cookie = 1` variable that is in the `try` statement which would verify that it has clicked the reject cookies button.
 
 For my other public method you can see in `scraper_class.py` under the `url_link_scraper` method that I return the first element of the `links` list. From the code above you can see that I am using the `assertEqual` function again to check that the first element of the list is the link to the bitcoin page. Since the list of the top 50 crypo coins is subject to change I've decided to only check the top coin (Bitcoin) since it is unlikely for it to be removed from the top.
+
+## Milestone 6
+For this milestone I was asked to containerise the scraper.
+
+The first task I was asked to do was to run the scraper in headless mode meaning without the GUI. I have done this with the code below:
+```
+headless = webdriver.FirefoxOptions()
+headless.add_argument("--headless")
+driver = webdriver.Firefox(options=headless)
+```
+I had to switch to Firefox since the web scraper was not working properly in Chrome when running headless mode.
+
+The second task was to build and create a Docker image for my scraper. I have done this by creating a Dockerfile:
+```
+FROM python:3.9
+
+WORKDIR C:\Users\denni\Desktop\AiCore\Projects\data-collection-pipeline
+# Update the system and install firefox
+RUN apt-get update 
+RUN apt -y upgrade 
+RUN apt-get install -y firefox-esr
+
+# get the latest release version of firefox 
+RUN latest_release=$(curl -sS https://api.github.com/repos/mozilla/geckodriver/releases/latest \
+    | grep tag_name | sed -E 's/.*"([^"]+)".*/\1/') && \
+    # Download the latest release of geckodriver
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux32.tar.gz \
+    # extract the geckodriver
+    && tar -xvzf geckodriver* \
+    # add executable permissions to the driver
+    && chmod +x geckodriver \
+    # Move gecko driver in the system path
+    && mv geckodriver C:\Users\denni\Desktop\AiCore\Projects\data-collection-pipeline
+
+COPY scraper_class.py . 
+COPY requirements.txt .
+
+RUN /usr/local/bin/python -m pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+CMD ["python", "scraper_class.py"]
+```
+From the Dockerfile above you can see that I've set the working directory and downloaded and installed the latest version of Firefox. I have also had to install the latest version of geckodriver. I have copied the `scraper_class.py` and `requirements.txt` files and installed the latest version of pip and all the packages in the `requirements.txt` file. After the image was created I pushed it to Dockerhub.
+
+## Milestone 7
+For this milestone I was asked to set up a CI/CD pipeline for my Docker image.
+
+For the first task I was asked to set up the Github secrets that contain the credentials to log in to my Dockerhub account to be able to push. I created two secrets one which contained my Docker ID as the value and the other my PAT token as the value.
+
+For the last task I was asked to create a Github action that is triggered on a push to the main branch of my repository. I did this by creating a workflow `.yaml` file:
+```
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ci_cd_scraper_img_builder:latest
+```
+From the code above you can see that the action will be triggered by a push to the main branch. You can also see that I am logging into my Dockerhub account witht he secret variables I created in the previous task which then builds and pushes the image to Dockerhub when a push is made to my Github repository.
