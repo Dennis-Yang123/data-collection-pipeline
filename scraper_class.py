@@ -15,12 +15,10 @@ headless = webdriver.FirefoxOptions()
 headless.add_argument("--headless")
 driver = webdriver.Firefox(options=headless)
 
-
 URL = "https://crypto.com/price"
 website = driver.get(URL)
 
 class ScraperClass:
-
     def __init__(self, website):
         self.website = website
         self.dictionary = {"Price Summary": [], "Img Link": [], "Timestamp": [], "ID": []}
@@ -47,6 +45,7 @@ class ScraperClass:
             print("Loading took too much time.")
 
         return cookie
+
     def url_link_scraper(self):
         """Scrapes the links to top 50 current crypto coins
 
@@ -97,7 +96,6 @@ class ScraperClass:
                 
             self.__img_downloader(img_link)
 
-            
     def __text_scraper(self):
         """Scrapes text from web page
 
@@ -157,7 +155,6 @@ class ScraperClass:
         if f.mode == "r":
             contents = f.read()
         
-        
     def __img_downloader(self, img_link):
         """Downloads the image and saves it locally
 
@@ -183,12 +180,8 @@ class ScraperClass:
         except:
             print("Image file already exists") 
 
-  
 if __name__ == '__main__':
     run = ScraperClass(website)
     run.cookie_ad_clicker()
     run.url_link_scraper()
-
-# This is a test  
-
 # %%

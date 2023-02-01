@@ -2,7 +2,6 @@
 import unittest
 import scraper_class
 
-
 class TestScraperClass(unittest.TestCase):
     def setUp(self):
         self.scraper = scraper_class.ScraperClass
